@@ -108,7 +108,7 @@ module DeviseTokenAuth
 
     def render_create_success
       render json: {
-        data: @resource.token_validation_response
+        data: serialized_resource
       }
     end
 

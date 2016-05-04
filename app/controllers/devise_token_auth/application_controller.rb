@@ -8,6 +8,14 @@ module DeviseTokenAuth
       devise_parameter_sanitizer.instance_values['permitted'][resource]
     end
 
+    def serialized_resource
+      ActiveModelSerializers::SerializableResource.new(
+        @resource,
+        serializer: get_serializer_for(resource_name),
+        root: resource_name
+      )
+    end
+
     def resource_class(m=nil)
       if m
         mapping = Devise.mappings[m]
