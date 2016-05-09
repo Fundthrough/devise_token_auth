@@ -11,8 +11,8 @@ module DeviseTokenAuth
 
       # derive target redirect route from 'resource_class' param, which was set
       # before authentication.
-      devise_mapping = request.env['omniauth.params']['resource_class'].underscore.gsub("/", "_").to_sym
-      redirect_route = "#{request.protocol}#{request.host_with_port}/#{Devise.mappings[devise_mapping].fullpath}/#{params[:provider]}/callback"
+      # redirect_route = "#{request.protocol}#{request.host_with_port}/#{Devise.mappings[devise_mapping].fullpath}/#{params[:provider]}/callback"
+      redirect_route = "#{request.protocol}#{request.host_with_port}/v1/auth/#{params[:provider]}/callback"
 
       # preserve omniauth info for success route. ignore 'extra' in twitter
       # auth response to avoid CookieOverflow.
@@ -77,9 +77,7 @@ module DeviseTokenAuth
     # break out provider attribute assignment for easy method extension
     def assign_provider_attrs(user, auth_hash)
       user.assign_attributes({
-        nickname: auth_hash['info']['nickname'],
         name:     auth_hash['info']['name'],
-        image:    auth_hash['info']['image'],
         email:    auth_hash['info']['email']
       })
     end
@@ -231,7 +229,7 @@ module DeviseTokenAuth
     def get_resource_from_auth_hash
       # find or create user by provider and provider uid
       @resource = resource_class.where({
-        uid:      auth_hash['uid'],
+        uid:      auth_hash['uid'].gsub('https://openid.intuit.com/', ''),
         provider: auth_hash['provider']
       }).first_or_initialize
 
