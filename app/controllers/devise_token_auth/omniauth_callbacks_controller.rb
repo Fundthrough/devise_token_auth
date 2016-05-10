@@ -5,23 +5,6 @@ module DeviseTokenAuth
     skip_before_action :set_user_by_token, raise: false
     skip_after_action :update_auth_header
 
-    # intermediary route for successful omniauth authentication. omniauth does
-    # not support multiple models, so we must resort to this terrible hack.
-    def redirect_callbacks
-
-      # derive target redirect route from 'resource_class' param, which was set
-      # before authentication.
-      # redirect_route = "#{request.protocol}#{request.host_with_port}/#{Devise.mappings[devise_mapping].fullpath}/#{params[:provider]}/callback"
-      redirect_route = "#{request.protocol}#{request.host_with_port}/v1/auth/#{params[:provider]}/callback"
-
-      # preserve omniauth info for success route. ignore 'extra' in twitter
-      # auth response to avoid CookieOverflow.
-      session['dta.omniauth.auth'] = request.env['omniauth.auth'].except('extra')
-      session['dta.omniauth.params'] = request.env['omniauth.params']
-
-      redirect_to redirect_route
-    end
-
     def omniauth_success
       get_resource_from_auth_hash
       create_token_info
@@ -75,10 +58,11 @@ module DeviseTokenAuth
     end
 
     # break out provider attribute assignment for easy method extension
-    def assign_provider_attrs(user, auth_hash)
+    def assign_provider_attrs(user)
       user.assign_attributes({
-        name:     auth_hash['info']['name'],
-        email:    auth_hash['info']['email']
+        name:     (user.name || auth_hash.info.name),
+        provider: auth_hash.provider,
+        uid:      auth_hash.uid.gsub('https://openid.intuit.com/', '')
       })
     end
 
@@ -105,10 +89,6 @@ module DeviseTokenAuth
       end
     end
 
-    def resource_name
-      resource_class
-    end
-
     def omniauth_window_type
       omniauth_params['omniauth_window_type']
     end
@@ -127,8 +107,7 @@ module DeviseTokenAuth
     # is to persist the omniauth auth hash value thru a redirect. the value
     # must be destroyed immediatly after it is accessed by omniauth_success
     def auth_hash
-      @_auth_hash ||= session.delete('dta.omniauth.auth')
-      @_auth_hash
+      @_auth_hash ||= request.env['omniauth.auth'].except('extra')
     end
 
     # ensure that this controller responds to :devise_controller? conditionals.
@@ -228,10 +207,7 @@ module DeviseTokenAuth
 
     def get_resource_from_auth_hash
       # find or create user by provider and provider uid
-      @resource = resource_class.where({
-        uid:      auth_hash['uid'].gsub('https://openid.intuit.com/', ''),
-        provider: auth_hash['provider']
-      }).first_or_initialize
+      @resource = resource_class.find_or_initialize_by(email: auth_hash.info.email)
 
       if @resource.new_record?
         @oauth_registration = true
@@ -239,7 +215,7 @@ module DeviseTokenAuth
       end
 
       # sync user info with provider, update/generate auth token
-      assign_provider_attrs(@resource, auth_hash)
+      assign_provider_attrs(@resource)
 
       # assign any additional (whitelisted) attributes
       extra_params = whitelisted_params
