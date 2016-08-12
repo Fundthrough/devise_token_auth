@@ -23,7 +23,7 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     # no default user defined
     return unless rc
 
-    #gets the headers names, which was set in the initilize file
+    #gets the headers names, which was set in the initialize file
     uid_name = DeviseTokenAuth.headers_names[:'uid']
     access_token_name = DeviseTokenAuth.headers_names[:'access-token']
     client_name = DeviseTokenAuth.headers_names[:'client']
@@ -61,7 +61,12 @@ module DeviseTokenAuth::Concerns::SetUserByToken
     user = uid && rc.find_by_uid(uid)
 
     if user && user.valid_token?(@token, @client_id)
-      sign_in(:user, user, store: false, bypass: true)
+      # sign_in with bypass: true will be deprecated in the next version of Devise
+      if self.respond_to? :bypass_sign_in
+        bypass_sign_in(user, scope: :user)
+      else
+        sign_in(:user, user, store: false, bypass: true)
+      end
       return @resource = user
     else
       # zero all values previously set values
