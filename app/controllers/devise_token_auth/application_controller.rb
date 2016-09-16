@@ -16,6 +16,10 @@ module DeviseTokenAuth
       )
     end
 
+    def resource_name
+      :user
+    end
+
     def resource_class(m=nil)
       if m
         mapping = Devise.mappings[m]
