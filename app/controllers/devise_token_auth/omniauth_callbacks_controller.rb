@@ -186,7 +186,7 @@ module DeviseTokenAuth
 
     def get_resource_from_auth_hash
       # find or create user by email
-      @resource = resource_class.find_or_initialize_by(email: auth_hash.info.email)
+      @resource = find_or_initialize_resource
 
       if @resource.new_record?
         @oauth_registration = true
@@ -201,6 +201,11 @@ module DeviseTokenAuth
       @resource.assign_attributes(extra_params) if extra_params
 
       @resource
+    end
+
+    def find_or_initialize_resource
+      email = auth_hash.info.email
+      resource_class.find_for_authentication(email: email) || resource_class.new(email: email)
     end
 
   end
