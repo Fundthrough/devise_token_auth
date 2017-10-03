@@ -2,6 +2,8 @@ module DeviseTokenAuth
   class ApplicationController < DeviseController
     include DeviseTokenAuth::Concerns::SetUserByToken
 
+    before_action :set_csp_headers
+
     protected
 
     def params_for_resource(resource)
@@ -28,6 +30,10 @@ module DeviseTokenAuth
       end
 
       mapping.to
+    end
+
+    def set_csp_headers
+      response.headers['Content-Security-Policy'] = ENV['CONTENT_SECURITY_POLICY']
     end
   end
 end
