@@ -54,7 +54,8 @@ module DeviseTokenAuth
     end
 
     def user_full_name
-      [auth_hash.info.first_name, auth_hash.info.last_name].join(" ").squish
+      full_name = [auth_hash.info.first_name, auth_hash.info.last_name].join(" ").squish
+      full_name.present? ? full_name : auth_hash.info.name
     end
 
     # derive allowed params from the standard devise parameter sanitizer
