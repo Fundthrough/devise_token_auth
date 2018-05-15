@@ -47,10 +47,14 @@ module DeviseTokenAuth
     # break out provider attribute assignment for easy method extension
     def assign_provider_attrs(user)
       user.assign_attributes({
-        name:     (user.name || auth_hash.info.name),
+        name:     (user.name || user_full_name),
         provider: auth_hash.provider,
         uid:      auth_hash.uid.gsub('https://openid.intuit.com/', '')
       })
+    end
+
+    def user_full_name
+      [auth_hash.info.first_name, auth_hash.info.last_name].join(" ").squish
     end
 
     # derive allowed params from the standard devise parameter sanitizer
