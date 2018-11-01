@@ -31,6 +31,7 @@ module ActionDispatch::Routing
                  class_name: resource,
                  module: :devise,
                  path: opts[:at].to_s,
+                 as:   opts[:as],
                  controllers: controllers,
                  skip: opts[:skip] + [:omniauth_callbacks]
 
@@ -39,7 +40,7 @@ module ActionDispatch::Routing
         full_path = "#{@scope[:path]}/#{opts[:at]}"
 
         # get namespace name
-        namespace_name = @scope[:as]
+        namespace_name = opts[:as]
 
         # clear scope so controller routes aren't namespaced
         @scope = ActionDispatch::Routing::Mapper::Scope.new(
