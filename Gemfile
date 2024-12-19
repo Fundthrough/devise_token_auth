@@ -27,7 +27,7 @@ group :development, :test do
   gem "pry"
   gem "pry-remote"
   gem 'minitest'
-  gem 'minitest-rails'
+  gem 'minitest-rails', '>= 8.0.0'
   gem 'minitest-focus'
   gem 'minitest-reporters'
   gem 'guard'
