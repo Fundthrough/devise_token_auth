@@ -27,10 +27,10 @@ group :development, :test do
   gem "pry"
   gem "pry-remote"
   gem 'minitest'
-  gem 'minitest-rails'
+  gem 'minitest-rails', '>= 7.1.0'
   gem 'minitest-focus'
   gem 'minitest-reporters'
-  gem 'guard'
+  gem 'guard', '>= 2.14.0'
   gem 'guard-minitest'
   gem 'faker'
   gem 'fuzz_ball'
