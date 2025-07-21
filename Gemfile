@@ -14,7 +14,7 @@ gemspec
 # gem 'debugger'
 
 group :development, :test do
-  gem 'thor'
+  gem 'thor', '>= 1.4.0'
   gem "figaro",                 :github => 'laserlemon/figaro'
   gem 'omniauth-github',        :git => 'git://github.com/intridea/omniauth-github.git'
   gem 'omniauth-facebook',      :git => 'git://github.com/mkdynamic/omniauth-facebook.git'
@@ -27,10 +27,10 @@ group :development, :test do
   gem "pry"
   gem "pry-remote"
   gem 'minitest'
-  gem 'minitest-rails'
+  gem 'minitest-rails', '>= 2.2.1'
   gem 'minitest-focus'
   gem 'minitest-reporters'
-  gem 'guard'
+  gem 'guard', '>= 2.14.0'
   gem 'guard-minitest'
   gem 'faker'
   gem 'fuzz_ball'
