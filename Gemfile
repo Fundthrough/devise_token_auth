@@ -27,7 +27,7 @@ group :development, :test do
   gem "pry"
   gem "pry-remote"
   gem 'minitest'
-  gem 'minitest-rails'
+  gem 'minitest-rails', '>= 3.0.0'
   gem 'minitest-focus'
   gem 'minitest-reporters'
   gem 'guard'
@@ -43,5 +43,5 @@ group :test do
 end
 
 group :development do
-  gem "github_changelog_generator"
+  gem "github_changelog_generator", ">= 1.10.4"
 end
