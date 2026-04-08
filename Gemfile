@@ -43,5 +43,5 @@ group :test do
 end
 
 group :development do
-  gem "github_changelog_generator"
+  gem "github_changelog_generator", ">= 1.10.4"
 end
